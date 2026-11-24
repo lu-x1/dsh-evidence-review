@@ -1,3 +1,7 @@
+# 2026-11-25 后续探针（运行版本不变）
+
+Completed six low-effort review checkpoints, eight high-effort checkpoints with a deterministic public Python-code index, and eight synthetic cache requests. Reports preserve per-case misses, uncompleted reviews, one late false warning, costs, and prior-reference limits. Added a task-free AST indexing prototype with five mechanism tests and an offline score recount. No pooled whole-cohort score, live repair result, default runtime change, or new release asset.
+
 # 2026-11-25 研究对照（运行版本不变）
 
 Completed fresh24-point R0/R1 comparison:3/9 versus4/9 target reminders, with one incomplete correction request in R1; both3/9 when excluding it. Normal false reminders0/15 in both arms, completion20/24 in both, R1 component cost+61.8%. Requirement cards are not enabled by default. Added all-case records, cost recount, failure analysis and task-free research diffs. An isolated quote compatibility candidate passes44 local mechanism tests and recovers one saved output on zero-API replay; no live repair claim. Existing runtime, historical scorecards and release assets are unchanged.

@@ -4,6 +4,8 @@
 
 本轮没有主Agent续跑或修复保持成绩。引用兼容修复单独通过44项本地机制测试；48条保存输出的零API重放恢复1条格式失败，不能当作新模型实网纠偏率。
 
+后续：[低推理、代码索引与合成缓存探针](evaluation/followup-probes-01/RESULTS.md)。低推理6点目标提醒2/4、正常完成1/2，费用$0.549723；代码索引8点目标提醒2/5、正常完成3/3，费用$0.176412。分母与缓存状态不同，旧高推理参考未同时重跑，不形成新的整集分数。两种候选均未启用默认代码；索引通用原型通过5项本地机制测试。运行 `python3 evaluation/followup-probes-01/recompute_scores.py` 可重算逐例结果。
+
 历史：[v0.6扩测，25点库、24点已测](evaluation/expansion-02/RESULTS.md)；[v0.5早期评测](evaluation/RESULTS.md)。原报告与分数保留，不跨批次混算。旧真实定期对照仍未证明最终任务收益。
 
 复核本轮：`python3 evaluation/requirements-card-01/recompute_scores.py`。它从公开人工裁定重新计数并核算费用合计及默认基线源码哈希，不调用模型，不替代独立人审。

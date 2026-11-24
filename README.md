@@ -17,6 +17,8 @@
 
 评测库现有25个检查点（10错误、15正常），覆盖8个数据来源；本轮固定重测24点，F26在调用前排除，错误分母为9。全部是已见开发数据，单次配对，无独立留出集；K18/K19关联且有生效语义疑点。该分数是端点发现并形成提醒，**没有本轮修复、保持修复或全任务收益分数**。当前未通过“解决大多数漂移”的验收。
 
+另已完成[低推理6点、代码出处索引8点及缓存控制探针](evaluation/followup-probes-01/RESULTS.md)：低推理目标提醒2/4、正常完成1/2；代码索引目标提醒2/5、正常完成3/3。索引未解决Kiva公式、水质分母和NFL定义三个预选难例；低推理另有一条超时后误报，未交付但保留风险记录。这些已见小样本探索未启用默认配置，也不拼接进上述24点分数。
+
 [历史v0.6扩测](evaluation/expansion-02/RESULTS.md)与[更早v0.5结果](evaluation/RESULTS.md)原样保留，不跨批次挑最好数字。旧FoodHub真实定期对照最终两组均未通过；Kiva续跑不完整，仍未证明最终任务收益。另行实现的引用兼容候选通过44项本地机制测试；本批保存输出的零API重放恢复1条引用失败，这是兼容性验证，未并入默认代码，也不是新模型纠偏成绩。
 
 ## 安装与启用
@@ -56,11 +58,12 @@ dsh plugin --profile YOUR_PROFILE add /absolute/path/to/package
 
 ```bash
 python3 evaluation/requirements-card-01/recompute_scores.py
+python3 evaluation/followup-probes-01/recompute_scores.py
 python3 evaluation/expansion-02/recompute_scores.py
 npm test
 ```
 
-前两个命令分别复核本轮与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
+前三个命令分别复核本轮、后续探针与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
 
 ## 已知限制与反馈
 
