@@ -1,3 +1,7 @@
+# 2026-11-25 研究对照（运行版本不变）
+
+Completed fresh24-point R0/R1 comparison:3/9 versus4/9 target reminders, with one incomplete correction request in R1; both3/9 when excluding it. Normal false reminders0/15 in both arms, completion20/24 in both, R1 component cost+61.8%. Requirement cards are not enabled by default. Added all-case records, cost recount, failure analysis and task-free research diffs. An isolated quote compatibility candidate passes44 local mechanism tests and recovers one saved output on zero-API replay; no live repair claim. Existing runtime, historical scorecards and release assets are unchanged.
+
 # 0.3.0-experimental.3
 
 First public experimental release. Runtime source and all mechanism tests are byte-identical to frozen 0.3.0 (5dcdb48ddac7429ea685972e0553c6c2fe75368f). Added the public scorecard, all seven known-error outcomes, machine-readable scoring records, source hashes, installation instructions and report verifier. Packaging metadata lists the exact SDK packages needed by the included tests. No new model runs or runtime changes.

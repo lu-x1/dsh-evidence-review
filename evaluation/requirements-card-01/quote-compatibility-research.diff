@@ -1,0 +1,132 @@
+--- a/src/protocol.js
++++ b/src/protocol.js
+@@ -1,5 +1,6 @@
+ // Factorial diagnostic protocol; no task names, counts or expected answers.
+ import assert from 'node:assert/strict';
++import {normalizeQuotes} from './quote-compat.js';
+ import { readFileSync } from 'node:fs';
+ import { pathToFileURL } from 'node:url';
+ 
+@@ -42,10 +43,10 @@
+ }
+ export function validate(text,candidate,refs,history,mode,options={}) {
+   assert(typeof text==='string' && Buffer.byteLength(text)<=64000,'reply_size');
+-  const c=MODES[mode];assert(c,'mode');const r=parseReview(text);
++  const c=MODES[mode];assert(c,'mode');const recovered=normalizeQuotes(text,candidate,refs);const r=parseReview(recovered.text);
+   shape(r,['assessment','audit','issues']);assert(['on-track','drift','unknown'].includes(r.assessment),'assessment');
+   assert(Array.isArray(r.audit)&&Array.isArray(r.issues)&&r.issues.length<=c.limit,'arrays_or_issue_limit');
+-  const warnings=[];
++  const warnings=[...recovered.warnings];
+   const userQuote=q=>typeof q==='string'&&Boolean(q.trim())&&refs.some(x=>x.text.includes(q));
+   const evidence=q=>typeof q==='string'&&Boolean(q.trim())&&(candidate.includes(q)||history.some(x=>x.text.includes(q)));
+   for(const row of r.audit) {
+--- /dev/null
++++ b/src/quote-compat.js
+@@ -0,0 +1,29 @@
++// Diagnostic candidate only; not part of the frozen paid comparison.
++// Recover escaped layout characters only when the result is an exact excerpt
++// of the evidence that the existing validator already accepts as a source.
++export function normalizeQuotes(text,candidate,refs) {
++  const warnings=[];
++  if(typeof text!=='string'||Buffer.byteLength(text)>96000)return {text,warnings};
++  let parsed;
++  try {
++    const fenced=/^```(?:json)?[ \t]*\r?\n([\s\S]*)\r?\n```$/.exec(text.trim());
++    parsed=JSON.parse(fenced?fenced[1]:text);
++  }catch{return {text,warnings};}
++  if(!parsed||!Array.isArray(parsed.issues))return {text,warnings};
++  function recover(value,sources,field,index) {
++    if(typeof value!=='string'||!value.trim()||sources.some(s=>s.includes(value)))return value;
++    const expanded=value.replace(/\\r\\n|\\n|\\r|\\t/g,s=>({'\\r\\n':'\r\n','\\n':'\n','\\r':'\r','\\t':'\t'})[s]);
++    const encoded=JSON.stringify(value).slice(1,-1);
++    const variants=[['decode_layout',expanded],['encode_json_string',encoded],['encode_json_string_twice',JSON.stringify(encoded).slice(1,-1)]];
++    for(const [strategy,represented] of variants)if(represented!==value&&sources.some(s=>s.includes(represented))) {
++      warnings.push({reason:'serialization_quote_recovered',field,index,strategy});return represented;
++    }
++    return value;
++  }
++  for(const [i,issue] of parsed.issues.entries()) {
++    if(!issue||typeof issue!=='object')continue;
++    issue.candidate_quote=recover(issue.candidate_quote,[candidate],'candidate_quote',i);
++    if(Array.isArray(issue.requirement_quotes))issue.requirement_quotes=issue.requirement_quotes.map((q,j)=>recover(q,refs.map(r=>r.text),`requirement_quotes.${j}`,i));
++  }
++  return {text:warnings.length?JSON.stringify(parsed):text,warnings};
++}
+--- a/test/baseline.test.js
++++ b/test/baseline.test.js
+@@ -62,21 +62,22 @@
+         } else {
+           const bad=mode==='interval'?data.review_window.entries.some(e=>e.text.includes('drop_required_rows')):data.candidate.includes('drop_required_rows');
+           const r=reviewReply(mode==='interval'&&bad?'drop_required_rows':data.candidate,bad,mode==='invalid');
++          if(mode==='serialization'&&bad)r.issues[0].candidate_quote='drop_required_rows\n\ncontinued';
+           block={type:'text',text:mode==='length'?'{':JSON.stringify(r)};
+           finish=mode==='length'?'length':mode==='error'?'error':'stop';
+         }
+       } else {
+         assert(isAgentLoopRequest(req));seen.push(req);step++;
+         const notices=req.messages.filter(m=>m.source?.kind===plugin.name);
+-        if (step===3 && mode==='normal' && every===2) assert.equal(notices.length,1,'notice reached actual next actor input');
++        if (step===3 && ['normal','serialization'].includes(mode) && every===2) assert.equal(notices.length,1,'notice reached actual next actor input');
+         const ordinal=priorOrdinal+step;
+         if (mode==='long' && ordinal===105) assert.equal(notices.length,1,'late reminder reached actual next actor input');
+         const command=mode==='interval'?(step===1?'keep_all_rows':step===2?'drop_required_rows':step===3?'inspect_plot':step===4?'render_summary':null):mode==='long'
+           ? step===steps?null:ordinal===104?'drop_required_rows':ordinal===105?'restore_rows':'keep_all_rows'
+           : step===1?'keep_all_rows':step===2?'drop_required_rows':
+-            step===3&&mode==='normal'&&every===2?'restore_rows':null;
+-        block=command?{type:'tool-call',id:randomUUID(),name:'noop',arguments:JSON.stringify({command})}
+-          :{type:'text',text:'Completed.'};finish=command?'tool-calls':'stop';
++            step===3&&['normal','serialization'].includes(mode)&&every===2?'restore_rows':null;
++        block=mode==='serialization'&&step===2?{type:'text',text:JSON.stringify({answer:'drop_required_rows\n\ncontinued'})}:command?{type:'tool-call',id:randomUUID(),name:'noop',arguments:JSON.stringify({command})}
++          :{type:'text',text:'Completed.'};finish=mode==='serialization'&&step===2?'stop':command?'tool-calls':'stop';
+         assert(step<=(mode==='long'?steps:mode==='interval'?5:4),'unbounded actor loop');
+       }
+       yield {type:'block-start',index:0,blockType:block.type};
+@@ -156,3 +157,13 @@
+   assert.equal(f.rows.filter(r=>r.phase==='delivery').length,1);
+   assert(f.seen[4].messages.some(m=>m.source?.kind===plugin.name&&publicText(m.content).includes('drop_required_rows')));
+ });
++
++// A reviewer quotes the rendered answer while the actor candidate is JSON.
++// This verifies the recovery reaches the next native AgentLoop input.
++test('native loop delivers a supported quote recovered from a JSON answer representation',async t=>{
++  const f=await fixture(t,'serialization');
++  assert.equal(f.seen.length,4,JSON.stringify(f.rows));
++  assert.equal(f.rows.filter(r=>r.phase==='delivery').length,1);
++  assert(f.seen[2].messages.some(m=>m.source?.kind===plugin.name));
++  assert.deepEqual(f.executed,['keep_all_rows','restore_rows']);
++});
+--- /dev/null
++++ b/test/quote-compat.test.js
+@@ -0,0 +1,32 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {normalizeQuotes} from '../src/quote-compat.js';
++const reply=q=>JSON.stringify({issues:[{candidate_quote:q,requirement_quotes:['keep\\nall']}]});
++test('recover escaped layout only when whole quote occurs exactly in allowed evidence',()=>{
++  const out=normalizeQuotes(reply('first\\n\\nsecond'),'first\n\nsecond',[{text:'keep\nall'}]);
++  assert.equal(JSON.parse(out.text).issues[0].candidate_quote,'first\n\nsecond');
++  assert.equal(JSON.parse(out.text).issues[0].requirement_quotes[0],'keep\nall');
++  assert.equal(out.warnings.length,2);
++});
++test('preserve an already exact literal backslash sequence in code',()=>{
++  const text=reply('print("a\\nb")');
++  assert.equal(normalizeQuotes(text,'print("a\\nb")',[{text:'keep\\nall'}]).text,text);
++});
++test('recover a quote from a nested JSON answer only as an exact original substring',()=>{
++  const quote='first\\n\\nsecond';
++  const candidate=JSON.stringify({answer:quote});
++  const out=normalizeQuotes(reply(quote),candidate,[{text:'keep\\nall'}]);
++  assert(candidate.includes(JSON.parse(out.text).issues[0].candidate_quote));
++  assert.equal(out.warnings[0].strategy,'encode_json_string');
++});
++test('no fuzzy matching, ellipsis recovery or attribution to other source types',()=>{
++  const text=reply('first...second');
++  assert.equal(normalizeQuotes(text,'first\n\nsecond',[{text:'different'}]).text,text);
++  const other=reply('first\\nsecond');
++  assert.equal(normalizeQuotes(other,'first\nDIFFERENT\nsecond',[{text:'different'}]).text,other);
++});
++test('parse failure and unrelated fields are preserved',()=>{
++  assert.equal(normalizeQuotes('not JSON','x',[]).text,'not JSON');
++  const text=JSON.stringify({issues:[],diagnosis:'a\\nb'});
++  assert.equal(normalizeQuotes(text,'a\nb',[]).text,text);
++});

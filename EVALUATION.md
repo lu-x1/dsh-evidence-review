@@ -1,5 +1,9 @@
-# 当前公开评测
+# 公开评测索引
 
-正式结果表与7例明细见[evaluation/RESULTS.md](evaluation/RESULTS.md)，计分口径见[evaluation/PROTOCOL.md](evaluation/PROTOCOL.md)，机器分数见[evaluation/results.json](evaluation/results.json)。
+最新：[24点独立要求卡两组对照与失败分析](evaluation/requirements-card-01/RESULTS.md)。原核对3/9目标提醒，加要求卡4/9，其中一条修复建议不完整；排除该条两组均3/9。正常误提醒均0/15，完成均20/24；组件费用$0.380163与$0.615204（+61.8%）。要求卡未并入默认插件。全部为已见开发材料，非独立测试集。
 
-固定错误片段目标检出率50.0%（3/6）；原正常片段误提醒0/8，补充WiDS同一来源正常片段0/6。真实定期纠偏对照最终两组均0/1，未证明最终收益；这一次观察到费用增加7.7%。F10旧答案可修复，但后两题两组均正确。未完成7例全部纠偏续跑，不计算整体修复率。不能把历史其他版本的成功混入当前成绩。
+本轮没有主Agent续跑或修复保持成绩。引用兼容修复单独通过44项本地机制测试；48条保存输出的零API重放恢复1条格式失败，不能当作新模型实网纠偏率。
+
+历史：[v0.6扩测，25点库、24点已测](evaluation/expansion-02/RESULTS.md)；[v0.5早期评测](evaluation/RESULTS.md)。原报告与分数保留，不跨批次混算。旧真实定期对照仍未证明最终任务收益。
+
+复核本轮：`python3 evaluation/requirements-card-01/recompute_scores.py`。它从公开人工裁定重新计数并核算费用合计及默认基线源码哈希，不调用模型，不替代独立人审。

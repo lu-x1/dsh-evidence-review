@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "research_diff": "requirements-card-research.diff",
+      "applies_to_default_source_and_tests": true,
+      "reconstructs_tested_candidate_source_and_tests": true,
+      "sha256": "b20cf684ddc5bfa3ca45d2c1e7b28dd28a850b441fb36e6dea8ce9f4caf12d8b"
+    },
+    {
+      "research_diff": "quote-compatibility-research.diff",
+      "applies_to_default_source_and_tests": true,
+      "reconstructs_tested_candidate_source_and_tests": true,
+      "sha256": "e2c70fd1aae13fc6549b7bf74479eed854b805d3d470aefd42f55adc085cd160"
+    }
+  ],
+  "model_calls": 0
+}

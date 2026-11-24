@@ -1,0 +1,317 @@
+--- a/src/index.js
++++ b/src/index.js
+@@ -4,17 +4,19 @@
+ import { candidateBlock, checkpointWindow, digest, latestUserEpoch, noticeText, requirements, tail } from './core.js';
+ import { reviewBranch } from './review-branch.js';
+ import { createReadOnlyExecutor } from './review-tools.js';
++import {cardKey,cardEnvelope,extractCard,validateCard} from './requirements-card.js';
+ 
+ export const name = 'dsh-evidence-review';
+ export const inject = ['agents','sessions','llm'];
+ export const RECORD_TYPE = 'plugin:dsh-evidence-review/receipt';
+ 
+ export function configure(input={}) {
+-  const config={ every:8, maxTokens:16384, timeoutMs:120000, maxToolCalls:3, maxRounds:(input.maxToolCalls??3)+1, toolTimeoutMs:15000, pythonExecutable:'/usr/bin/python3', reviewScope:'current', verifyDefinitions:false, ...input };
+-  assert(Object.keys(config).every(k => ['every','maxTokens','timeoutMs','maxToolCalls','maxRounds','toolTimeoutMs','pythonExecutable','reviewScope','verifyDefinitions'].includes(k)), 'unknown_config');
++  const config={ every:8, maxTokens:16384, timeoutMs:120000, maxToolCalls:3, maxRounds:(input.maxToolCalls??3)+1, toolTimeoutMs:15000, pythonExecutable:'/usr/bin/python3', reviewScope:'current', verifyDefinitions:false, requirementCards:true, cardMaxTokens:8192, cardTimeoutMs:60000, cardReasoningEffort:'low', ...input };
++  assert(Object.keys(config).every(k => ['every','maxTokens','timeoutMs','maxToolCalls','maxRounds','toolTimeoutMs','pythonExecutable','reviewScope','verifyDefinitions','requirementCards','cardMaxTokens','cardTimeoutMs','cardReasoningEffort'].includes(k)), 'unknown_config');
+   for (const [key,value] of Object.entries(config)) {
+     if(key==='reviewScope')assert(['current','interval'].includes(value),'invalid_reviewScope');
+-    else if(key==='verifyDefinitions')assert(typeof value==='boolean','invalid_verifyDefinitions');
++    else if(key==='verifyDefinitions'||key==='requirementCards')assert(typeof value==='boolean',`invalid_${key}`);
++    else if(key==='cardReasoningEffort')assert(['off','low','high','max'].includes(value),'invalid_cardReasoningEffort');
+     else if(key==='pythonExecutable')assert(typeof value==='string'&&value.startsWith('/'),'invalid_pythonExecutable');
+     else assert(Number.isSafeInteger(value) && value > 0, `invalid_${key}`);
+   }
+@@ -33,7 +35,8 @@
+     const rows=agent.session.snapshotEvents().filter(e => e.type===RECORD_TYPE).map(e => e.data);
+     agents.set(agent.session.id,{ agent, ordinal:Math.max(0,...rows.map(r => r.ordinal ?? 0)),
+       lastCheckpoint:rows.findLast(r=>r.phase==='window_boundary'||(r.phase==='check'&&r.candidateSha256)),
+-      sent:new Set(rows.filter(r => r.phase==='delivery').map(r => r.key)) });
++      sent:new Set(rows.filter(r => r.phase==='delivery').map(r => r.key)),
++      cardCache:rows.findLast(r=>r.phase==='requirements_card'||r.phase==='requirements_card_failed') });
+   });
+   ctx.on('llm/stream',(options,next) => {
+     if (!isAgentLoopRequest(options) || disposed.signal.aborted) return next();
+@@ -61,11 +64,32 @@
+       record(state,{phase:'window_boundary',...state.lastCheckpoint});
+       const refs=requirements(options.messages,state.agent.session.snapshotEvents());
+       if (!refs.length) { record(state,{phase:'unreviewed',ordinal,reason:'no_authenticated_user_requirements'});return; }
++      let requirementsCard;
++      if(config.requirementCards) {
++        const cardOptions={...options,reasoningEffort:config.cardReasoningEffort};
++        const key=cardKey(refs,{...cardOptions,cardMaxTokens:config.cardMaxTokens});
++        if(state.cardCache?.key!==key) {
++          try {
++            const cardSignal=AbortSignal.any([...(options.signal?[options.signal]:[]),disposed.signal,AbortSignal.timeout(config.cardTimeoutMs)]);
++            const outcome=await extractCard({stream:r=>ctx.llm.stream(r),options:cardOptions,refs,signal:cardSignal,maxTokens:config.cardMaxTokens,
++              record:row=>record(state,{ordinal,sourceEpoch,...row})});
++            state.cardCache={phase:outcome.status==='ready'?'requirements_card':'requirements_card_failed',key,...outcome};
++          } catch(error) {state.cardCache={phase:'requirements_card_failed',key,status:'unavailable',reason:'extraction_failed',errorClass:error?.name??'Error'};}
++          record(state,{ordinal,sourceEpoch,...state.cardCache});
++        }else record(state,{phase:'requirements_card_reused',ordinal,sourceEpoch,key,status:state.cardCache.status});
++        if(state.cardCache.status==='ready') {
++          try {requirementsCard=cardEnvelope(validateCard(JSON.stringify(state.cardCache.card),refs).card,refs);}
++          catch(error){record(state,{phase:'requirements_card_fallback',ordinal,sourceEpoch,reason:'cached_card_invalid'});}
++        }
++        if(latestUserEpoch(state.agent.session.snapshotEvents())!==sourceEpoch) {
++          record(state,{phase:'delivery_skipped',ordinal,reason:'user_updated_during_extraction'});return;
++        }
++      }
+       const signal=AbortSignal.any([...(options.signal?[options.signal]:[]),disposed.signal,AbortSignal.timeout(config.timeoutMs)]);
+       // Original messages and adapter-private replay state stay opaque and on
+       // their original route. Appending a new user message does not mutate them.
+       const review={...options, messages:[...options.messages,createUserMessage({
+-        source:{kind:name,form:'review-request'},content:[{type:'text',text:tail(candidate,refs,{window,verifyDefinitions:config.verifyDefinitions})}]})],
++        source:{kind:name,form:'review-request'},content:[{type:'text',text:tail(candidate,refs,{window,verifyDefinitions:config.verifyDefinitions,requirementsCard})}]})],
+         maxTokens:config.maxTokens,signal,purpose:'evidence-review'};
+       assert(!isAgentLoopRequest(review), 'review_marked_as_actor');
+       record(state,{phase:'check',ordinal,sourceEpoch,candidateSha256:digest(candidate),
+--- a/src/protocol.js
++++ b/src/protocol.js
+@@ -27,6 +27,7 @@
+   // selection, summary, answers, or additional source evidence.
+   if(users) x.original_user_messages=users.map(r=>r.text);
+   if(options.window)x.review_window=options.window;
++  if(options.requirementsCard)x.requirements_card=options.requirementsCard;
+   const rules=options.window?RULES.replace('just-proposed public candidate','new execution interval and its current public candidate').replace('one exact continuous candidate excerpt','one exact continuous candidate or interval assistant/tool excerpt'):RULES;
+   return rules+'\n'+(c.audit?AUDIT_INSTRUCTION:SPOT_INSTRUCTION)+(options.window?'\n'+INTERVAL_CHECK:'')+(options.verifyDefinitions?'\n'+DEFINITION_CHECK:'')+'\n\n'+JSON.stringify(x);
+ }
+--- /dev/null
++++ b/src/requirements-card.js
+@@ -0,0 +1,80 @@
++import assert from 'node:assert/strict';
++import {BlockAssembler, createUserMessage} from '@deepseek-ai/dsh-llm';
++import {digest, publicText} from './core.js';
++
++export const EXTRACTOR_RULES=`DSH_INDEPENDENT_REQUIREMENTS_CARD_V1
++Extract requirements material to the latest user request from the authenticated user messages below. You have no agent answer, tool result, reviewer notice or reference solution. Return only JSON with rules (array) and unresolved_references (array). This is a partial relevance aid, not a replacement for the original messages.
++Each rule has exactly id, requirement, source_message_ids (nonempty string array), applies_to, activation, replaces (array of rule ids or descriptive user-defined references), dependencies (string array), uncertainties (string array). All other rule fields are strings. Use at most16 compact rules relevant to the latest request, including material inherited constraints. Do not enumerate unrelated future stages merely because their definitions appeared early.
++Derive definitions, input representations, formulas, reference populations, membership conditions, ordering, rounding and temporary exceptions from user wording. Separate a definition from when and where it is active. A new question does not cancel unchanged requirements; an old rule does not apply outside its scope. Distinguish a replacement, a scoped exception and a compatible addition. Preserve legitimate restoration after a temporary sensitivity.
++Use only supplied source message IDs. Do not invent requirements, assume all rules are currently active, or infer numerical answers. Record actual uncertainty. For references such as 'those pairs' or 'the same population', resolve only when user text suffices. Otherwise add an unresolved_references row with exactly source_message_ids (nonempty string array), phrase and uncertainty (strings). Retain a symbolic reference in the relevant rule instead of guessing members or substituting a present table. A later verifier has the full history to locate the historical object designated by the user.
++You do not have tools. Do not request them or continue the analytical task. Do not reveal private reasoning. Keep entries concise; original user messages remain authoritative.`;
++
++export function extractorPayload(refs) {
++  assert(Array.isArray(refs)&&refs.length,'no_authenticated_requirements');
++  const users=refs.map(({id,text})=>{assert(typeof id==='string'&&typeof text==='string','source_type');return {id,text};});
++  assert(new Set(users.map(r=>r.id)).size===users.length,'duplicate_source_id');
++  return EXTRACTOR_RULES+'\n\n'+JSON.stringify({authenticated_user_messages:users});
++}
++
++export function cardKey(refs,options={}) {
++  return digest(JSON.stringify([EXTRACTOR_RULES,options.provider,options.model,options.reasoningEffort,options.cardMaxTokens,extractorPayload(refs)]));
++}
++
++export function extractorRequest(options,refs,{signal,maxTokens=8192}={}) {
++  // Whitelist: never spread actor system/messages/tools/toolHistory/replay state.
++  const request={provider:options.provider,model:options.model,messages:[createUserMessage({
++    source:{kind:'dsh-evidence-review',form:'requirements-extraction'},
++    content:[{type:'text',text:extractorPayload(refs)}]})],tools:[],
++    maxTokens,signal,purpose:'requirements-extraction'};
++  for(const key of ['reasoningEffort','temperature'])if(options[key]!==undefined)request[key]=options[key];
++  return request;
++}
++
++function parse(text) {
++  const match=/^```(?:json)?[ \t]*\r?\n([\s\S]*)\r?\n```$/.exec(text.trim());
++  return JSON.parse(match?match[1]:text);
++}
++const strings=x=>Array.isArray(x)&&x.every(v=>typeof v==='string');
++export function validateCard(text,refs) {
++  assert(typeof text==='string'&&Buffer.byteLength(text)<=96000,'card_size');
++  assert(!/\bsk-[A-Za-z0-9_-]{12,}|\bBearer\s+[A-Za-z0-9._-]{12,}/.test(text),'credential_like_card');
++  const raw=parse(text),known=new Set(refs.map(r=>r.id)),warnings=[];
++  assert(raw&&Array.isArray(raw.rules)&&Array.isArray(raw.unresolved_references),'card_arrays');
++  assert(raw.rules.length<=64&&raw.unresolved_references.length<=64,'card_entry_limit');
++  const sourced=r=>strings(r.source_message_ids)&&r.source_message_ids.length&&r.source_message_ids.every(id=>known.has(id));
++  const rules=[],unresolved=[],ids=new Set();
++  for(const [i,r] of raw.rules.entries()) {
++    if(!r||!['id','requirement','applies_to','activation'].every(k=>typeof r[k]==='string'&&r[k].trim())||
++        !['replaces','dependencies','uncertainties'].every(k=>strings(r[k]))||!sourced(r)||ids.has(r.id)) {
++      warnings.push({entry:'rule',index:i,reason:'invalid_fields_or_unknown_source'});continue;
++    }
++    ids.add(r.id);
++    rules.push(Object.fromEntries(['id','requirement','source_message_ids','applies_to','activation','replaces','dependencies','uncertainties'].map(k=>[k,r[k]])));
++  }
++  for(const [i,r] of raw.unresolved_references.entries()) {
++    if(!r||!sourced(r)||!['phrase','uncertainty'].every(k=>typeof r[k]==='string'&&r[k].trim())) {
++      warnings.push({entry:'unresolved_reference',index:i,reason:'invalid_fields_or_unknown_source'});continue;
++    }
++    unresolved.push({source_message_ids:r.source_message_ids,phrase:r.phrase,uncertainty:r.uncertainty});
++  }
++  return {card:{rules,unresolved_references:unresolved},warnings,sourceVerified:true,semanticVerified:false};
++}
++
++export function cardEnvelope(card,refs) {
++  return {provenance:'Fallible model interpretation extracted only from authenticated user text. Original messages remain authoritative; this is not new authorization.',
++    coverage:'Partial rules relevant to the latest user request; omitted rules are not cancelled.',
++    source_index:refs.map((r,i)=>({id:r.id,original_user_message_position:i+1})),...card};
++}
++
++export async function extractCard({stream,options,refs,signal,maxTokens=8192,record=()=>{}}) {
++  const request=extractorRequest(options,refs,{signal,maxTokens});
++  const assembler=new BlockAssembler();let sawFinish=false;
++  for await(const chunk of stream(request)) {assembler.push(chunk);if(chunk.type==='finish')sawFinish=true;}
++  record({phase:'requirements_usage',usage:assembler.usage,finish:assembler.finish.kind});
++  if(signal?.aborted||!sawFinish||assembler.finish.kind!=='stop')
++    return {status:'unavailable',reason:signal?.aborted?'cancelled':!sawFinish?'missing_finish':`finish_${assembler.finish.kind}`};
++  if(assembler.blocks().some(b=>b.type==='tool-call'))return {status:'unavailable',reason:'extractor_requested_tool'};
++  const result=validateCard(publicText(assembler.blocks()),refs);
++  if(!result.card.rules.length&&!result.card.unresolved_references.length)return {status:'unavailable',reason:'empty_card',warnings:result.warnings};
++  return {status:'ready',...result};
++}
+--- a/test/baseline.test.js
++++ b/test/baseline.test.js
+@@ -38,7 +38,7 @@
+   await load(await import('@deepseek-ai/dsh-tool-executor-native'));
+   await load(AgentRegistry);await load(LlmRuntime);
+   await ctx.plugin(AgentLoop,{agents:[],maxParallelToolCalls:1}).await();
+-  await ctx.plugin(plugin,mode==='long'?{timeoutMs:1000}:{every,timeoutMs:1000,...(mode==='interval'?{reviewScope:'interval'}:{})});
++  await ctx.plugin(plugin,mode==='long'?{requirementCards:false,timeoutMs:1000}:{requirementCards:false,every,timeoutMs:1000,...(mode==='interval'?{reviewScope:'interval'}:{})});
+   const executed=[],seen=[],reviews=[];let step=0,agent;
+   ctx.tools.register({name:'noop',description:'Record a string without executing it',
+     parameters:{type:'object',properties:{command:{type:'string'}},required:['command']},
+--- a/test/native-verification.test.js
++++ b/test/native-verification.test.js
+@@ -22,7 +22,7 @@
+   for(const p of [SessionStore,SessionProjectionRegistry,SystemPrompt,ToolRuntime])await load(p);
+   await load(await import('@deepseek-ai/dsh-tool-executor-native'));await load(AgentRegistry);await load(LlmRuntime);
+   await ctx.plugin(AgentLoop,{agents:[],maxParallelToolCalls:1}).await();
+-  await ctx.plugin(plugin,{every:2,timeoutMs:10000}).await();
++  await ctx.plugin(plugin,{every:2,timeoutMs:10000,requirementCards:false}).await();
+   let actorSteps=0,reviewRounds=0,actorTools=0;const actors=[];
+   for(const name of ['noop','bash'])ctx.tools.register({name,description:name,
+     parameters:{type:'object',properties:{command:{type:'string'}},required:['command']},
+--- /dev/null
++++ b/test/requirements-card.test.js
+@@ -0,0 +1,130 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {randomUUID} from 'node:crypto';
++import {Context} from '@deepseek-ai/cordis';
++import {SessionStore,SessionId} from '@deepseek-ai/dsh-session';
++import {AgentRegistry} from '@deepseek-ai/dsh-agent';
++import {AgentLoop} from '@deepseek-ai/dsh-agent-loop';
++import {LlmRuntime,LlmAdapter,createUserMessage,isAgentLoopRequest} from '@deepseek-ai/dsh-llm';
++import {ToolRuntime} from '@deepseek-ai/dsh-tools';
++import {SystemPrompt} from '@deepseek-ai/dsh-system-prompt';
++import {SessionProjectionRegistry} from '@deepseek-ai/dsh-session-projection';
++import {publicText,tail} from '../src/core.js';
++import * as plugin from '../src/index.js';
++import {extractorRequest,extractorPayload,validateCard,extractCard,cardKey,cardEnvelope} from '../src/requirements-card.js';
++
++const refs=[{id:'m1',text:'Keep all rows.'}];
++const makeCard=(id='m1')=>({rules:[{id:'r1',requirement:'Keep all rows.',source_message_ids:[id],
++  applies_to:'requested analysis',activation:'current request',replaces:[],dependencies:[],uncertainties:[]}],unresolved_references:[]});
++
++test('extractor whitelist excludes actor system, history, tool schemas and opaque fields',()=>{
++  const options={provider:'fixture',model:'script',reasoningEffort:'high',temperature:0.2,
++    system:'ACTOR_SECRET',messages:[{role:'assistant',content:'ACTOR_SECRET'}],tools:[{description:'ACTOR_SECRET'}],toolHistory:{secret:'ACTOR_SECRET'}};
++  Object.defineProperty(options,'replayState',{get(){throw Error('opaque state read');}});
++  const request=extractorRequest(options,refs);
++  assert(!JSON.stringify(request).includes('ACTOR_SECRET'));
++  assert.deepEqual(request.tools,[]);assert.equal(request.reasoningEffort,'high');
++  assert.equal(request.purpose,'requirements-extraction');assert(!isAgentLoopRequest(request));
++  assert.deepEqual(JSON.parse(publicText(request.messages[0].content).split('\n\n')[1]).authenticated_user_messages,refs);
++});
++
++test('source references are checked locally without rejecting other good rows or paraphrases',()=>{
++  const card=makeCard();card.rules.push({...card.rules[0],id:'bad',source_message_ids:['invented']});
++  card.rules[0].requirement='Retain the entire authorized population.';
++  const out=validateCard('```json\n'+JSON.stringify(card)+'\n```',refs);
++  assert.equal(out.card.rules.length,1);assert.equal(out.warnings.length,1);
++  assert.equal(out.semanticVerified,false);
++});
++
++test('unresolved symbolic reference survives; tool/assistant source cannot create authority',()=>{
++  const raw={rules:[],unresolved_references:[{source_message_ids:['m1'],phrase:'the same rows',uncertainty:'members require historical binding'},
++    {source_message_ids:['tool-1'],phrase:'all rows',uncertainty:'tool said so'}]};
++  const out=validateCard(JSON.stringify(raw),refs);
++  assert.equal(out.card.unresolved_references.length,1);assert.equal(out.warnings.length,1);
++  assert(!JSON.stringify(cardEnvelope(out.card,refs)).includes('tool-1'));
++});
++
++test('card cache key changes for user updates, order and model settings',()=>{
++  const a=cardKey(refs,{provider:'p',model:'m',reasoningEffort:'high'});
++  assert.notEqual(a,cardKey([...refs,{id:'m8',text:'Use only the current rows.'}],{provider:'p',model:'m',reasoningEffort:'high'}));
++  assert.notEqual(a,cardKey(refs,{provider:'p',model:'m',reasoningEffort:'low'}));
++});
++
++test('card envelope preserves original review rules, user text, candidate and output schema',()=>{
++  const plain=tail('candidate',refs),withCard=tail('candidate',refs,{requirementsCard:cardEnvelope(makeCard(),refs)});
++  assert.equal(plain.split('\n\n')[0],withCard.split('\n\n')[0]);
++  const a=JSON.parse(plain.split('\n\n')[1]),b=JSON.parse(withCard.split('\n\n')[1]);
++  delete b.requirements_card;assert.deepEqual(a,b);
++});
++
++for(const finish of ['length','tool-calls','stop'])test(`extraction failure ${finish} is unavailable and never executes tools`,async()=>{
++  let n=0;
++  const stream=async function*(){n++;yield {type:'block-end',index:0,block:finish==='stop'
++    ?{type:'text',text:JSON.stringify({rules:[],unresolved_references:[]})}
++    :{type:'tool-call',id:'x',name:'bash',arguments:'{"command":"never"}'}};
++    yield {type:'finish',reason:{kind:finish}};};
++  const out=await extractCard({stream,options:{provider:'fixture',model:'script'},refs});
++  assert.equal(out.status,'unavailable');assert.equal(n,1);
++});
++
++async function nativeFixture(t,{failed=false}={}) {
++  const ctx=new Context();t.after(()=>ctx.fiber.dispose());const load=p=>ctx.plugin(p).await();
++  for(const p of [SessionStore,SessionProjectionRegistry,SystemPrompt,ToolRuntime])await load(p);
++  await load(await import('@deepseek-ai/dsh-tool-executor-native'));await load(AgentRegistry);await load(LlmRuntime);
++  await ctx.plugin(AgentLoop,{agents:[],maxParallelToolCalls:1}).await();
++  await ctx.plugin(plugin,{every:2,cardTimeoutMs:2000,timeoutMs:2000}).await();
++  ctx.tools.register({name:'noop',description:'fixture tool',parameters:{type:'object',properties:{}},
++    output:{schema:{type:'object'},render:()=>[{type:'text',text:'ACTOR_TOOL_SECRET'}]},execute:async()=>({})});
++  let actor=0,extractions=0,reviews=0;const seen=[];
++  ctx.llm.registerAdapter(['fixture'],new class extends LlmAdapter {
++    async resolveModel(provider,model){return {provider,id:model,name:model,reasoning:{efforts:[{id:'low',name:'Low'},{id:'high',name:'High'}]}};}
++    async *stream(req) {
++      let block,finish='stop';
++      if(req.purpose==='requirements-extraction') {
++        extractions++;assert(!JSON.stringify(req.messages).includes('ACTOR_ONLY_MARKER'));assert(!JSON.stringify(req.messages).includes('ACTOR_TOOL_SECRET'));
++        assert.deepEqual(req.tools,[]);assert.equal(req.maxTokens,8192);assert.equal(req.reasoningEffort,'low');
++        const users=JSON.parse(publicText(req.messages[0].content).split('\n\n')[1]).authenticated_user_messages;
++        block={type:'text',text:failed?'{':JSON.stringify(makeCard(users[0].id))};
++        if(failed)finish='length';
++      }else if(req.purpose==='evidence-review') {
++        reviews++;const source=seen.at(-1);assert.deepEqual(req.messages.slice(0,source.messages.length),source.messages);
++        assert.deepEqual(req.tools,source.tools);assert.equal(req.maxTokens,16384);assert.equal(req.reasoningEffort,'high');
++        const x=JSON.parse(publicText(req.messages[source.messages.length].content).split('\n\n')[1]);
++        assert.equal(Boolean(x.requirements_card),!failed);
++        const bad=x.candidate.includes('drop_rows');
++        block={type:'text',text:JSON.stringify({assessment:bad?'drift':'on-track',audit:['objective','scope','method'].map(dimension=>({
++          dimension,requirement:'Keep all rows.',requirement_quotes:['Keep all rows.'],updates:[],
++          observed:x.candidate,evidence_quotes:[x.candidate],status:bad&&dimension==='scope'?'conflict':'consistent'})),
++          issues:bad?[{candidate_quote:x.candidate,requirement_quotes:['Keep all rows.'],diagnosis:'removes required rows',reminder:'Restore the required rows.'}]:[]})};
++      }else {
++        actor++;seen.push(req);
++        assert(!JSON.stringify(req.messages).includes('DSH_INDEPENDENT_REQUIREMENTS_CARD_V1'));
++        assert(!JSON.stringify(req.messages).includes('source_message_ids'));
++        block=[1,2,3,5].includes(actor)?{type:'tool-call',id:randomUUID(),name:'noop',arguments:JSON.stringify({command:actor===2?'ACTOR_ONLY_MARKER drop_rows':'ACTOR_ONLY_MARKER keep_rows'})}:{type:'text',text:'Completed.'};
++        if(block.type==='tool-call')finish='tool-calls';
++      }
++      yield {type:'block-end',index:0,block};yield {type:'finish',reason:{kind:finish}};
++    }
++  }());
++  const handle=await ctx.agents.create({sessionId:SessionId(randomUUID()),agentOptions:{provider:'fixture',model:'script',reasoningEffort:'high'}});
++  handle.agent.followup(createUserMessage({source:{kind:'user'},content:[{type:'text',text:'Keep all rows.'}]}));
++  await handle.agent.whenIdle();
++  assert.equal(actor,4);assert.equal(extractions,1);assert.equal(reviews,2);
++  handle.agent.followup(createUserMessage({source:{kind:'user'},content:[{type:'text',text:'Continue while keeping all rows.'}]}));
++  await handle.agent.whenIdle();
++  assert.equal(actor,6);assert.equal(extractions,2);assert.equal(reviews,3);
++  const rows=handle.agent.session.snapshotEvents().filter(e=>e.type===plugin.RECORD_TYPE).map(e=>e.data);
++  assert.deepEqual(rows.filter(r=>r.phase==='check').map(r=>r.ordinal),[2,4,6]);
++  assert.equal(rows.filter(r=>r.phase==='delivery').length,1);
++  assert(seen[2].messages.some(m=>m.source?.form==='notice'));
++  return rows;
++}
++
++test('real DSH loop keeps extraction separate, reuses unchanged card and refreshes on user update',async t=>{
++  const rows=await nativeFixture(t);assert.equal(rows.filter(r=>r.phase==='requirements_card').length,2);
++  assert.equal(rows.filter(r=>r.phase==='requirements_card_reused').length,1);
++});
++test('failed extraction falls back to baseline and is not retried until user messages change',async t=>{
++  const rows=await nativeFixture(t,{failed:true});assert.equal(rows.filter(r=>r.phase==='requirements_card_failed').length,2);
++  assert.equal(rows.filter(r=>r.phase==='requirements_card_reused').length,1);
++});
