@@ -1,3 +1,7 @@
+# 2026-11-25 上下文与计时诊断（运行版本不变）
+
+Closed the atomic-comparison probe and two compact-context effort probes. Preserve all misses, late findings, one false reminder confirmed against archived data, budget censoring, fees and failed prospective screens. Identified substantial experimental bookkeeping latency and validated separate completion-event timing and local persistent journal staging using loopback fixtures, with unchanged financial guards; no corrected live score is claimed. Added aggregate records, a standalone compact-view prototype, a score recount and an explicitly unimplemented next-design memo. Default runtime and release assets remain unchanged.
+
 # 2026-11-25 后续探针（运行版本不变）
 
 Completed six low-effort review checkpoints, eight high-effort checkpoints with a deterministic public Python-code index, and eight synthetic cache requests. Reports preserve per-case misses, uncompleted reviews, one late false warning, costs, and prior-reference limits. Added a task-free AST indexing prototype with five mechanism tests and an offline score recount. No pooled whole-cohort score, live repair result, default runtime change, or new release asset.
