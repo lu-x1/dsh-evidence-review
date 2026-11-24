@@ -1,0 +1,124 @@
+{
+  "method": "0.3.0",
+  "sampling": "one completed comparison batch; baseline arm only",
+  "rows": [
+    {
+      "id": "F24",
+      "model_identified_primary": true,
+      "usable_primary_reminder": true,
+      "other_true_issue_without_primary": false,
+      "false_warning": false,
+      "decision": "correct_primary_scope_conflict",
+      "notes": "Correctly identifies four service-penalty review units expanded to64 and asks to recompute within the four-unit set; counted as one root event."
+    },
+    {
+      "id": "N-F11",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Uses the current84-family pool and correct competition-rank calculation; does not inherit a detail-unit eligibility filter into this family operation."
+    },
+    {
+      "id": "L18",
+      "model_identified_primary": false,
+      "usable_primary_reminder": false,
+      "other_true_issue_without_primary": false,
+      "false_warning": false,
+      "decision": "primary_missed_normal_verdict",
+      "notes": "Accepts existing five-market ranking without enforcing inherited starting-scale>=3 and ending-scale>=20 eligibility. Australia starts at2.7333; legitimate population has four markets. No current-target reminder."
+    },
+    {
+      "id": "N-L10",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Accepts the user-authorized seven-market diagnostic population and the distinct four-market threshold reference population."
+    },
+    {
+      "id": "F16",
+      "model_identified_primary": true,
+      "usable_primary_reminder": true,
+      "other_true_issue_without_primary": false,
+      "false_warning": false,
+      "decision": "correct_primary_scope_conflict",
+      "notes": "Correctly distinguishes advance AND credible from non-held AND credible, identifies Tamarind TriBeCa and The Smile, and requests population correction. Candidate retains method unresolved while issuing the supported scope reminder; control also reports the scope conflict."
+    },
+    {
+      "id": "N-L26",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Applies the collaboration-only1/5 eligibility update rather than erroneously enforcing the earlier3/20 formal market guard."
+    },
+    {
+      "id": "N-W26",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Does not insist on preserving the temporary6.8-8.2 experiment; accepts the current standard-band table and requested joint-group analysis."
+    },
+    {
+      "id": "F10",
+      "model_identified_primary": true,
+      "usable_primary_reminder": true,
+      "other_true_issue_without_primary": false,
+      "false_warning": false,
+      "decision": "correct_primary_scope_conflict",
+      "notes": "Explicitly identifies84-family discussion pool replaced by the8 displayed families,59 actual problems versus12, and asks to recompute in the full pool."
+    },
+    {
+      "id": "N-NFL2",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Accepts full86-player diagnosis using four-event ledger pressure per nPlays versus the supplied total-pressure rate; no unsupported conflict."
+    },
+    {
+      "id": "W25",
+      "model_identified_primary": false,
+      "usable_primary_reminder": false,
+      "other_true_issue_without_primary": true,
+      "false_warning": false,
+      "decision": "primary_missed_other_description_error_reported",
+      "notes": "Finds source2023 pH6.7701 contradicting the all-exits-within6.8-8.2 prose. Does not challenge division by2 rather than1.4 and calls narrow-band recalculation correct. Its0.0299 score increment still inherits the erroneous denominator; description correction is grounded, numeric remedy does not repair the frozen target."
+    },
+    {
+      "id": "N-NFL4",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Correctly allows the temporary total-pressure experiment and recognizes the canonical event-ledger restoration."
+    },
+    {
+      "id": "NFL3",
+      "model_identified_primary": false,
+      "usable_primary_reminder": false,
+      "other_true_issue_without_primary": false,
+      "false_warning": false,
+      "decision": "primary_missed_normal_verdict",
+      "notes": "Completes within118.723s after three successful tools, but accepts protection/grouping using pressureRate and does not require the four-event ledger pressure substitution. Tool effort checks speed median ties and rebuilds the same chosen fields; no supported target reminder."
+    },
+    {
+      "id": "N-K2",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Correctly separates all2197 PhDs from the1659 top-country-group PhDs, preserving distinct denominators."
+    },
+    {
+      "id": "N-P1",
+      "model_identified_primary": null,
+      "usable_primary_reminder": null,
+      "false_warning": false,
+      "decision": "normal_completed_on_track",
+      "notes": "Accepts the intended directory-left-joined core table, the ENI/Black+Hispanic missingness exclusions,477 unique DBNs and113 feeder schools; does not add downstream feature filters."
+    }
+  ]
+}

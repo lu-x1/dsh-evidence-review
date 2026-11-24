@@ -1,0 +1,56 @@
+{
+  "evaluation_id": "DSH-Drift-Pilot-v0.5-20261124",
+  "release_version": "0.3.0-experimental.3",
+  "runtime_version": "0.3.0",
+  "runtime_source_commit": "5dcdb48ddac7429ea685972e0553c6c2fe75368f",
+  "actor_and_reviewer": "official DeepSeek deepseek-flash; thinking enabled; high reasoning effort",
+  "split": "development_seen; no unseen positive task set",
+  "dataset": {
+    "confirmed_error_checkpoints": 7,
+    "error_task_families": 4,
+    "targeted_normal_checkpoints": 14,
+    "dependent_error_excluded_from_primary": [
+      "F26"
+    ]
+  },
+  "primary_diagnosis": {
+    "target_detected": 3,
+    "target_error_denominator": 6,
+    "target_detection_rate": 0.5,
+    "normal_false_reminders": 0,
+    "normal_denominator": 8,
+    "normal_false_reminder_rate": 0.0,
+    "completed_reviews": 14,
+    "attempted_reviews": 14
+  },
+  "supplemental_normals": {
+    "normal_denominator": 6,
+    "normal_false_reminders": 0,
+    "completed_reviews": 6,
+    "independent_source_tasks": 1
+  },
+  "native_periodic_terminal": {
+    "correct_with_plugin": 0,
+    "correct_without_plugin": 0,
+    "paired_task_denominator": 1,
+    "observed_score_gain_percentage_points": 0,
+    "cost_with_plugin_usd": "0.365261460000",
+    "cost_without_plugin_usd": "0.339061212000",
+    "observed_cost_change_fraction": 0.07727291436686068
+  },
+  "conditional_F10": {
+    "old_answer_repaired_with_reminder": true,
+    "old_answer_repaired_without_reminder": false,
+    "next_questions_with_reminder": "2/2",
+    "next_questions_without_reminder": "2/2"
+  },
+  "overall_seven_case_repair_rate": null,
+  "limits": [
+    "Fixed-candidate detection is not native-periodic coverage or repair success.",
+    "Seven errors include two related events F24/F26 from one chain; not seven independent tasks.",
+    "No current-version continuation on W25/F16/L18/NFL3; not scored as successes or failures.",
+    "One nonblind curator plus deterministic raw-CSV recomputation; no independent human review.",
+    "No LongDS official overall score, repeated-seed average, significance, or held-out-positive claim.",
+    "The observed cost change is one sequential pair, not a general cost estimate."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "name": "dsh-evidence-review",
+  "version": "0.3.0-experimental.3",
+  "type": "module",
+  "description": "Experimental periodic DSH evidence review with bounded read-only verification and one soft reminder",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./core": "./src/core.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "test",
+    "README.md",
+    "BASELINE.txt",
+    "LICENSE",
+    "CHANGELOG.md",
+    "example.patch.yml",
+    "cordis.patch.yml",
+    "EVALUATION.md",
+    "METHOD.md",
+    "evaluation"
+  ],
+  "scripts": {
+    "test": "node --test --test-isolation=none test/*.test.js"
+  },
+  "engines": {
+    "node": ">=24.14.1 <25",
+    "dsh": "0.2.2-rc.4"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/dsh-llm": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-agent": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-session": "0.2.2-rc.4"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/dsh-llm": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-agent": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-session": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-agent-loop": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-system-prompt": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-session-projection": "0.2.2-rc.4",
+    "@deepseek-ai/dsh-tool-executor-native": "0.2.2-rc.4"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lu-x1/dsh-evidence-review.git"
+  },
+  "homepage": "https://github.com/lu-x1/dsh-evidence-review#readme",
+  "bugs": {
+    "url": "https://github.com/lu-x1/dsh-evidence-review/issues"
+  }
+}

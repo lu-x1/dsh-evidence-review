@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "version": "0.3.0-experimental.3",
+  "artifact": "dsh-evidence-review-0.3.0-experimental.3.tgz",
+  "bytes": 37875,
+  "sha256": "d3aecf5a81ed729f23aef6310cd7bb35ac24ed7c0b3599d466bb354afefc3995",
+  "package_files": 31,
+  "runtime_and_test_files_byte_identical": 12,
+  "mechanism_tests_passed": 38,
+  "mechanism_tests_failed": 0,
+  "unpacked_score_verifier": "passed",
+  "unpacked_import": "passed with pinned host dependencies",
+  "credential_like_strings": 0,
+  "private_local_paths": 0,
+  "raw_requests_or_third_party_data_in_package": false,
+  "model_calls": 0,
+  "clean_online_install_verified": false
+}

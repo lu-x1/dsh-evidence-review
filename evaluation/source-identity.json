@@ -1,0 +1,20 @@
+{
+  "runtime_version": "0.3.0",
+  "runtime_source_commit": "5dcdb48ddac7429ea685972e0553c6c2fe75368f",
+  "package_version": "0.3.0-experimental.3",
+  "src_and_tests_byte_identical": true,
+  "sha256": {
+    "src/core.js": "61d11bd6dd492b9988c3165043f6a9386bd4d9ffb0719d9a4a3e2d13694a61ef",
+    "src/index.js": "7dca17a3e2c540611e39f6859b78c1d93ac4efb15694d4941d81592e75653a24",
+    "src/protocol.js": "605f18882e5d79c011a451be42582828c21b37f65e6a731082631e80320b0fc3",
+    "src/review-branch.js": "6f7890699f9d4233986647b30ab2b032a24a4cf1d3e6c474a19f4d7988a59ab7",
+    "src/review-tools.js": "03ebb513a27acd9c07cfaed61b3445687404fd39337881aa75a3204f198de08e",
+    "test/authenticated-tail.test.js": "74daaec0469866e7dc54a346f56ce1bde45e4d13566c15cb3ef0a1cf725a7be1",
+    "test/baseline.test.js": "c4fdf2d68ad3e307ed67e3739d1d162b58e51b89719b7911fb1f0179117f31f8",
+    "test/native-verification.test.js": "cd0eaeb7541157abac7b95daf2190432d15d839c5246e3d1b287d9aae9fd12fd",
+    "test/protocol.test.js": "a3277e4963d98c2233d1fde52437cdd0a4668ab60a37786f446298f205d192f1",
+    "test/review-branch.test.js": "7d58e7fc1ccb891d3e2139a9bc84654832c2e32e08ef3a669c24801051725d50",
+    "test/review-tools.test.js": "dd00e3f5d16ee767ef30fef6baecb275d7743099a88fe4f5bb6d2c73a938a3de",
+    "test/window.test.js": "47cd39cfa15502226a32e72ac1f00dc1279761697858b57790c00a8fc033bf04"
+  }
+}

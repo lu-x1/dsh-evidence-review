@@ -1,0 +1,16 @@
+{
+  "original_receipts_sha256": {
+    "conflict-first-pilot-01/execution-continuation-01/adjudication.json": "a035bdb67c0c89dc4192b21548f112cdc55004a54fb398cd2994eee7f6ad0f80",
+    "drift-evaluation-05/dataset.json": "9f734b28611bf346d7982820e9f6a58f5d9b61ed080b971c778438e304d0d7cc",
+    "evaluation-expansion-20261124/review/adjudication.json": "fe8074cffe5679c3d367cff96aa09acafb92d2aa0ad97022453f5fc7b18f31ca",
+    "evaluation-expansion-20261124/completion-01/review/adjudication.json": "d4c5abf28a5d68cd7821b5fc8b88025aedc8b7465f8a266ff86d5e788bb02860",
+    "evaluation-expansion-20261124/conditional-repair-01/adjudication.json": "da22644970ff15b6f99d0a956423e575bfbdf72f84a27158bfe80f599287d55c",
+    "evaluation-expansion-20261124/periodic-food21-01/adjudication.json": "0fd8b34921128f77311a987306688954250a38dbe74b399e058aed6e5792b09c",
+    "drift-repair-pilot-01/continuation-adjudication.json": "1cca62e5253a46a16cd4b01586b36bc5c1129edbaafb84a26d3737bb75914ee6",
+    "drift-repair-pilot-01/outcome-audit.json": "36028ac090bf2b646b379c4825690ebe62a76bf2beee6786efec320e52bde7ef"
+  },
+  "raw_requests_and_workspaces_published": false,
+  "public_export": "selected adjudication fields only; no original data, model reasoning, credentials or local paths",
+  "upstream_dataset": "https://huggingface.co/datasets/zjunlp/LongDS/tree/6b448459c333ecc050a2e89fcc65c0e044d763ac",
+  "reproducibility_limit": "Public verifier recomputes reported scores from exported decisions; it does not rerun paid trajectories or independently recreate the original adjudication."
+}

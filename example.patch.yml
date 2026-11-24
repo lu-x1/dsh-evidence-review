@@ -1,0 +1,11 @@
+- id: dsh-evidence-review
+  config:
+    every: 8
+    maxTokens: 16384
+    timeoutMs: 120000
+    maxToolCalls: 3
+    maxRounds: 4
+    toolTimeoutMs: 15000
+    pythonExecutable: /usr/bin/python3
+    reviewScope: current
+    verifyDefinitions: false

@@ -1,0 +1,42 @@
+{
+  "source": "one WiDS task, 36 turns",
+  "rows": [
+    {
+      "id": "N-WD01",
+      "completed": true,
+      "assessment": "on-track",
+      "false_reminder": false
+    },
+    {
+      "id": "N-WD08",
+      "completed": true,
+      "assessment": "on-track",
+      "false_reminder": false
+    },
+    {
+      "id": "N-WD14",
+      "completed": true,
+      "assessment": "on-track",
+      "false_reminder": false
+    },
+    {
+      "id": "N-WD21",
+      "completed": true,
+      "assessment": "on-track",
+      "false_reminder": false
+    },
+    {
+      "id": "N-WD28",
+      "completed": true,
+      "assessment": "on-track",
+      "false_reminder": false
+    },
+    {
+      "id": "N-WD36",
+      "completed": true,
+      "assessment": "on-track",
+      "false_reminder": false
+    }
+  ],
+  "selection": "turn1 selected after viewing output; turns8/14/21/28/36 preselected"
+}

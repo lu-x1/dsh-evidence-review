@@ -1,0 +1,114 @@
+{
+  "F10": {
+    "original_task10_answer_repair": {
+      "N": false,
+      "C": true,
+      "correct_problem_count": 59,
+      "correct_eligible_restaurants": 70,
+      "scope": "Explicit correction of previously delivered wrong answer; not a new fresh task or whole-task score."
+    },
+    "next_two_questions_correct": {
+      "N": "2/2",
+      "C": "2/2"
+    },
+    "incremental_next_question_score_gain": 0,
+    "notice_consumed": true,
+    "fresh_verifier_calls": 0,
+    "costs": {
+      "N": {
+        "actor_calls": 12,
+        "actor_cost_usd": "0.045772884000",
+        "completed_question_seconds": 211.875
+      },
+      "C": {
+        "actor_calls": 15,
+        "actor_cost_usd": "0.060724932000",
+        "completed_question_seconds": 272.847
+      }
+    },
+    "historical_notice_generation_cost_usd": "0.011986200000",
+    "historical_review_already_charged_not_new_spend": true
+  },
+  "F24_F26": {
+    "terminal_numeric_score": {
+      "C": 0,
+      "N": 0
+    },
+    "terminal_numeric_score_denominator_per_arm": 1,
+    "C_vs_N_total_cost_change_fraction": 0.07727291436686068,
+    "review_checks": 6,
+    "review_model_calls": 8,
+    "review_tool_calls": 2,
+    "deliveries": 3,
+    "costs": {
+      "C": {
+        "actor": {
+          "calls": 51,
+          "fee_usd": "0.264582588000",
+          "input_tokens": 23084045,
+          "cached_input_tokens": 23048448,
+          "weighted_input_cache_hit_fraction": 0.9984579392389852,
+          "output_tokens": 96344,
+          "summed_api_seconds": 715.977
+        },
+        "review": {
+          "calls": 8,
+          "fee_usd": "0.100678872000",
+          "input_tokens": 3802802,
+          "cached_input_tokens": 3760512,
+          "weighted_input_cache_hit_fraction": 0.9888792527194421,
+          "output_tokens": 54524,
+          "summed_api_seconds": 300.124
+        },
+        "total_fee_usd": "0.365261460000",
+        "arm_elapsed_seconds": 1288.238
+      },
+      "N": {
+        "actor": {
+          "calls": 73,
+          "fee_usd": "0.339061212000",
+          "input_tokens": 33425565,
+          "cached_input_tokens": 33383552,
+          "weighted_input_cache_hit_fraction": 0.9987430878131753,
+          "output_tokens": 105130,
+          "summed_api_seconds": 891.54
+        },
+        "review": {
+          "calls": 0,
+          "fee_usd": "0.000000000000",
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "weighted_input_cache_hit_fraction": null,
+          "output_tokens": 0,
+          "summed_api_seconds": 0
+        },
+        "total_fee_usd": "0.339061212000",
+        "arm_elapsed_seconds": 1211.957
+      }
+    },
+    "reminder_adjudication": [
+      {
+        "ordinal": 16,
+        "kind": "confirmed_scope_conflict",
+        "local_correction": true,
+        "persisted_to_next_question": false
+      },
+      {
+        "ordinal": 32,
+        "kind": "confirmed_stress_only_filter_conflict",
+        "local_correction": true,
+        "verification": "Question29 explicitly uses gate_pass & ~stressed_pass; its five reported keys match that predicate on stored32-row table.",
+        "limits": "Local filter repair within an already incorrect population, not restoration of the four-unit review set."
+      },
+      {
+        "ordinal": 48,
+        "kind": "missing_tool_prerequisite",
+        "semantic_long_chain_drift_evidence": false
+      }
+    ],
+    "scope_repaired_turn24": true,
+    "turn25_adopted_pool": 32,
+    "expected_pool": 4,
+    "run_design": "same native turn21 state; C then N; original turns22-33; late plugin attachment with counter zero"
+  }
+}
