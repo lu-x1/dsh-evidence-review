@@ -1,0 +1,95 @@
+{
+  "method_version": "0.3.0",
+  "status": "budget_censored_no_complete_four_question_pair",
+  "initial_closed_user_turn": 13,
+  "intended_questions": [
+    14,
+    15,
+    16,
+    17
+  ],
+  "periodic_every_successful_main_outputs": 8,
+  "max_session_checks": null,
+  "control": "Already-observed original plugin-OFF continuation; not repeated or newly billed.",
+  "randomized": false,
+  "independent_repetitions": 1,
+  "original_C": {
+    "completed_questions": [
+      14,
+      15
+    ],
+    "incomplete_question": 16,
+    "checks": [
+      {
+        "ordinal": 8,
+        "assessment": "on-track",
+        "target_detected": false
+      }
+    ],
+    "delivered_notices": 0,
+    "fee_usd": "0.091872300000",
+    "stop": "Local conservative reservation refused before forwarding; no provider402."
+  },
+  "resource_recovery_C": {
+    "restarted_from_closed_question": 15,
+    "restored_counter": 6,
+    "reexecutes_only_unfinished_question16_then17": true,
+    "first_request_equals_original_first_C16_request": true,
+    "exact_pending_model_request_resume": false,
+    "completed_questions": [
+      16
+    ],
+    "incomplete_question": 17,
+    "checks": [
+      {
+        "ordinal": 8,
+        "assessment": "on-track",
+        "target_detected": false
+      },
+      {
+        "ordinal": 16,
+        "assessment": "drift",
+        "target_detected": false,
+        "reminder_subject": "Preserve current population rather than use an extra >=10-region subset."
+      }
+    ],
+    "notice_enqueued": 1,
+    "notice_visible_in_next_local_request": 1,
+    "notice_forwarded_to_provider": 0,
+    "notice_consumed_by_model": 0,
+    "reminder_adjudication": "Candidate also printed a narrower diagnostic subset while retaining the full primary population. No adopted scope change or final answer at this point; not credited as a confirmed target finding or repair. Possible over-warning, not added to the frozen-normal false-reminder denominator.",
+    "raw_share_formula_error_detected": false,
+    "raw_share_formula_restored_in_completed16": false,
+    "question16_score": 0,
+    "question16_score_adjudication": "Nonblind offline comparison with the same reference: expected3 downgrades led by Sierra Leone1.234; actual5 led by Nigeria2.197, with incorrect absolute scores and extra Peru entries.",
+    "fee_usd": "0.091213236000",
+    "stop": "Next request refused locally before forwarding: remaining0.326876845200 below unchanged16384-output worst-case0.329318400000."
+  },
+  "jointly_completed_prefix": {
+    "questions": [
+      14,
+      15,
+      16
+    ],
+    "N_scores": [
+      1,
+      1,
+      0
+    ],
+    "C_scores": [
+      1,
+      1,
+      0
+    ],
+    "C_is_resource_restarted_composite_not_uninterrupted_pair": true,
+    "questions14_15_gap_correctness_does_not_mean_formula_restored": true,
+    "question17_C_score": null,
+    "full_four_question_score_gain": null
+  },
+  "all_C_attempts_cost_usd": "0.183085536000",
+  "all_aborted_attempt_costs_retained": true,
+  "full37_terminal_benefit_measured": false,
+  "later_K18_correction_measured": false,
+  "new_calls_for_adjudication": 0,
+  "adjudicator": "single nonblind root agent; no independent human rater"
+}

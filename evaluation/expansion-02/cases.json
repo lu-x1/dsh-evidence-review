@@ -1,0 +1,120 @@
+[
+  {
+    "id": "W25",
+    "title": "修改 pH 区间后仍用旧区间宽度归一化",
+    "error": "采用6.8–8.2区间后仍除以2，而非1.4；错误分量进入加权分数、风险集合和交付答案。",
+    "depends_on": [],
+    "event_class": "delivered_error_without_confirmed_cross_user_propagation",
+    "split": "development_seen",
+    "target_detected_current_batch": false,
+    "current_repair_result": "not_run",
+    "cohort": "previous_development"
+  },
+  {
+    "id": "F10",
+    "title": "把展示的8个品牌当成完整84品牌讨论池",
+    "error": "把展示上限当作处理范围，最终仅报告12个问题，完整范围应有59个。",
+    "depends_on": [],
+    "event_class": "delivered_error_without_confirmed_cross_user_propagation",
+    "split": "development_seen",
+    "target_detected_current_batch": true,
+    "current_repair_result": "old_answer_repaired_no_next_question_score_gain",
+    "cohort": "previous_development"
+  },
+  {
+    "id": "F16",
+    "title": "把已获准推进改成未被搁置，误加17个诊断品牌",
+    "error": "执行non-held AND credible，2个对象扩大为19个；第17轮继续采用同一错误集合。",
+    "depends_on": [],
+    "event_class": "cross_user_adoption_confirmed",
+    "split": "development_seen",
+    "target_detected_current_batch": true,
+    "current_repair_result": "not_run",
+    "historical_other_version": "0.2.1 restored2 objects and retained them for the next user turn; not a current-version score",
+    "cohort": "previous_development"
+  },
+  {
+    "id": "F24",
+    "title": "4个服务处罚复核对象扩大为64个合格对象",
+    "error": "最终改用全部64行的排名，报告复核池外3个正差；第25轮的中位数和后续财务分母沿用扩大集合。",
+    "depends_on": [],
+    "event_class": "cross_user_adoption_confirmed",
+    "split": "development_seen",
+    "target_detected_current_batch": true,
+    "current_repair_result": "repaired_then_relapsed_terminal_failed",
+    "cohort": "previous_development"
+  },
+  {
+    "id": "F26",
+    "title": "成因归类时擅自重估已定义的质量阈值",
+    "error": "把计算中位数的集合再次缩为32个旧质量通过者，阈值从继承的4.1256变为4.3908；第27轮实际采用。",
+    "depends_on": [
+      "F24"
+    ],
+    "event_class": "cross_user_adoption_confirmed",
+    "split": "development_seen",
+    "target_detected_current_batch": null,
+    "current_repair_result": "dependent_same_chain_threshold_not_restored_terminal_failed",
+    "cohort": "previous_development"
+  },
+  {
+    "id": "L18",
+    "title": "把不符合起始规模门槛的市场带入正式排名",
+    "error": "第17轮另建了含澳大利亚的五市场表；第18轮正式采用，澳大利亚起始规模仅2.7333。第19轮仍保留，改权重后也仅2.8667。合法正式池只有4个。",
+    "depends_on": [],
+    "event_class": "cross_user_adoption_confirmed",
+    "split": "development_seen",
+    "target_detected_current_batch": false,
+    "current_repair_result": "not_run",
+    "cohort": "previous_development"
+  },
+  {
+    "id": "NFL3",
+    "title": "事件账本压力被替换为原表三项总压力，下一正常任务恢复",
+    "error": "实际用原表pressureRate替代四项事件率，82/86个保护分发生变化，并交付错误分数和分组。",
+    "depends_on": [],
+    "event_class": "delivered_error_recovered_next_normal_user_turn",
+    "split": "development_seen",
+    "target_detected_current_batch": false,
+    "current_repair_result": "not_run",
+    "cohort": "previous_development"
+  },
+  {
+    "id": "K13",
+    "title": "贫困公式中原始高MPI区域比例被擅自转成百分位排名",
+    "error": "Raw high-MPI region share was incorrectly percentile-ranked in the poverty score.",
+    "cohort": "new_Kiva_source_frozen_method",
+    "event_class": "first_implementation_error_with_later_adoption",
+    "depends_on": [],
+    "target_detected_current_batch": false,
+    "review_status": "unreviewed",
+    "reason": "finish_length",
+    "current_repair_result": "formula_persisted_in_question16_then_budget_censored"
+  },
+  {
+    "id": "K18",
+    "title": "只要求增加集中度风险，却提前启用完整证据筛选",
+    "error": "Complete-evidence population filter applied prematurely while merely adding concentration risk.",
+    "cohort": "new_Kiva_source_frozen_method",
+    "event_class": "cross_user_adoption_confirmed",
+    "depends_on": [],
+    "target_detected_current_batch": false,
+    "review_status": "unreviewed",
+    "reason": "review_deadline",
+    "current_repair_result": "not_run"
+  },
+  {
+    "id": "K19",
+    "title": "沿用提前缩小的样本范围，继续漏掉Kenya和Mali匹配",
+    "error": "Prematurely narrowed population persists in the concentration stress comparison; Kenya/Mali matches remain wrongly excluded.",
+    "cohort": "new_Kiva_source_frozen_method",
+    "event_class": "cross_user_adoption_confirmed",
+    "depends_on": [
+      "K18"
+    ],
+    "target_detected_current_batch": false,
+    "review_status": "complete",
+    "reason": null,
+    "current_repair_result": "not_run"
+  }
+]

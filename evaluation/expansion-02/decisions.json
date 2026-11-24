@@ -1,0 +1,234 @@
+[
+  {
+    "id": "F24",
+    "cohort": "previous_development",
+    "label": "error",
+    "completed": true,
+    "target_detected": true,
+    "false_reminder": null,
+    "decision": "correct_primary_scope_conflict"
+  },
+  {
+    "id": "N-F11",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "L18",
+    "cohort": "previous_development",
+    "label": "error",
+    "completed": true,
+    "target_detected": false,
+    "false_reminder": null,
+    "decision": "primary_missed_normal_verdict"
+  },
+  {
+    "id": "N-L10",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "F16",
+    "cohort": "previous_development",
+    "label": "error",
+    "completed": true,
+    "target_detected": true,
+    "false_reminder": null,
+    "decision": "correct_primary_scope_conflict"
+  },
+  {
+    "id": "N-L26",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "N-W26",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "F10",
+    "cohort": "previous_development",
+    "label": "error",
+    "completed": true,
+    "target_detected": true,
+    "false_reminder": null,
+    "decision": "correct_primary_scope_conflict"
+  },
+  {
+    "id": "N-NFL2",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "W25",
+    "cohort": "previous_development",
+    "label": "error",
+    "completed": true,
+    "target_detected": false,
+    "false_reminder": null,
+    "decision": "primary_missed_other_description_error_reported"
+  },
+  {
+    "id": "N-NFL4",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "NFL3",
+    "cohort": "previous_development",
+    "label": "error",
+    "completed": true,
+    "target_detected": false,
+    "false_reminder": null,
+    "decision": "primary_missed_normal_verdict"
+  },
+  {
+    "id": "N-K2",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "N-P1",
+    "cohort": "previous_development",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "normal_completed_on_track"
+  },
+  {
+    "id": "N-WD01",
+    "cohort": "supplemental_WiDS",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "on-track"
+  },
+  {
+    "id": "N-WD08",
+    "cohort": "supplemental_WiDS",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "on-track"
+  },
+  {
+    "id": "N-WD14",
+    "cohort": "supplemental_WiDS",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "on-track"
+  },
+  {
+    "id": "N-WD21",
+    "cohort": "supplemental_WiDS",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "on-track"
+  },
+  {
+    "id": "N-WD28",
+    "cohort": "supplemental_WiDS",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "on-track"
+  },
+  {
+    "id": "N-WD36",
+    "cohort": "supplemental_WiDS",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "on-track"
+  },
+  {
+    "id": "K13",
+    "cohort": "new_Kiva",
+    "label": "error",
+    "completed": false,
+    "target_detected": false,
+    "false_reminder": null,
+    "decision": "finish_length",
+    "elapsed_seconds": 93.885,
+    "tools_executed": 0,
+    "original_prefix_unchanged": true,
+    "workspace_unchanged": true
+  },
+  {
+    "id": "K18",
+    "cohort": "new_Kiva",
+    "label": "error",
+    "completed": false,
+    "target_detected": false,
+    "false_reminder": null,
+    "decision": "review_deadline",
+    "elapsed_seconds": 155.022,
+    "tools_executed": 3,
+    "original_prefix_unchanged": true,
+    "workspace_unchanged": true
+  },
+  {
+    "id": "K19",
+    "cohort": "new_Kiva",
+    "label": "error",
+    "completed": true,
+    "target_detected": false,
+    "false_reminder": null,
+    "decision": "on-track",
+    "elapsed_seconds": 95.049,
+    "tools_executed": 1,
+    "original_prefix_unchanged": true,
+    "workspace_unchanged": true
+  },
+  {
+    "id": "K10",
+    "cohort": "new_Kiva",
+    "label": "normal",
+    "completed": true,
+    "target_detected": null,
+    "false_reminder": false,
+    "decision": "on-track",
+    "elapsed_seconds": 71.412,
+    "tools_executed": 0,
+    "original_prefix_unchanged": true,
+    "workspace_unchanged": true
+  }
+]

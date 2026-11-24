@@ -1,0 +1,24 @@
+{
+  "local_evidence_sha256": {
+    "evaluation-expansion-02/kiva-01/source-accounting-summary.json": "f033385451a3fa98d922524968355b410ea52b31b115d4e20f4febaba1aa2892",
+    "evaluation-expansion-02/kiva-01/source-adjudication.json": "2ba590974d5fe68e8dfeac17964321a156f1b4c58bb2e8553aa4adf6e12789ed",
+    "evaluation-expansion-02/kiva-01/independent-poverty.json": "725047fee6da7432bbdbe8c9e0aef2d6b4b7efb44a2beb4fc1afedf36c4ebf1b",
+    "evaluation-expansion-02/kiva-01/independent-scope.json": "4634f3d3961d4d36cb57e412c5bcfad8717d2a8d5e5d3ae4cf2a231ff88aed60",
+    "evaluation-expansion-02/kiva-01/review-cohort.json": "970efad32161a0927e6548d4f6065243f568e2340f1e3ee4b5cb4d22da33957c",
+    "evaluation-expansion-02/kiva-01/grading-01/results.json": "32e2c73589c4762076d039587a4f47e1bdf01506a420b00979f337ab99259112",
+    "evaluation-expansion-02/kiva-01/review-01/results.json": "ae0007d5b360056c1c620212ca3cf8e6c31667dbb2cf646332224d209abea544",
+    "evaluation-expansion-02/kiva-01/review-01/adjudication.json": "c529b78777a216db4edbec955448cba2c955c19322bddae009265d76f24d6875",
+    "evaluation-expansion-02/kiva-01/periodic-K13-01/registration.json": "c302e916ddefbfd4b3b3636e97d1254d3867da8155decf9d65f4c4ba852382d2",
+    "evaluation-expansion-02/kiva-01/periodic-K13-01/results.json": "ecc91eaec2067eb30783567474e143b17fce56f1804219e553ed2b56809a63f9",
+    "evaluation-expansion-02/kiva-01/periodic-K13-recovery01/registration.json": "2e75d788942df2544ac9743a25587e0cfb249a2129e6ab6e131523ee9905d987",
+    "evaluation-expansion-02/kiva-01/periodic-K13-recovery01/results.json": "d72b4e238c430f92fafc3a7108d4136c74a864bac888c67d765f296c43a2bd80",
+    "evaluation-expansion-02/kiva-01/periodic-K13-recovery01/recovery-qualification.json": "63517e8a71478635cfa45a28f67d49960171f07f48141e5ec24690c6c9bba561",
+    "evaluation-expansion-02/kiva-01/periodic-final-adjudication.json": "1e2a0f868c4728967d104937386719633917d26f82ddd0ff17ddffe92aa14ea9",
+    "evaluation-expansion-02/kiva-01/official-model-bound.json": "5173490f098648ed9b745b75c5806e199510602591f17018284fc53116849671",
+    "drift-evaluation-06/dataset.json": "10fe722cec4c3fea9963dd1761d34b351edc166e8b4cb621d68e1eb1c1f6ac9f"
+  },
+  "created_utc": "2026-11-24T17:27:49.353207+00:00",
+  "public_export": "Selected facts, judgments, token counters and hashes only. No local host paths, raw model requests, private reasoning, credentials, data or opaque sessions.",
+  "public_verifier_limit": "Arithmetic, inherited decision integrity and code identity; not an independent rerun or independent re-adjudication.",
+  "upstream": "https://huggingface.co/datasets/zjunlp/LongDS/tree/6b448459c333ecc050a2e89fcc65c0e044d763ac"
+}

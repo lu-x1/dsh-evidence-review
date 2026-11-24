@@ -1,0 +1,142 @@
+{
+  "task": "LongDS Lite v1.1 social_good/data_science_for_good_kiva_crowdfunding/task1",
+  "upstream_revision": "6b448459c333ecc050a2e89fcc65c0e044d763ac",
+  "task_sha256": "112c5d5dda8e9829c1582a0ebf352c6d299c80bd11421dc704a8aa84792b343d",
+  "data_page": "https://www.kaggle.com/datasets/kiva/data-science-for-good-kiva-crowdfunding",
+  "data_classification": "Public dataset, CC0 metadata; not an accepted-competition claim.",
+  "raw_csv_files": 6,
+  "raw_csv_bytes": 232824955,
+  "reference_code_unchanged_replay": "37/37; qualification only, never visible to actor/reviewer",
+  "planned_questions": 37,
+  "completed_questions": 20,
+  "censored_during_question": 21,
+  "unrun_questions": [
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37
+  ],
+  "scores": [
+    {
+      "turn": 1,
+      "score": 1
+    },
+    {
+      "turn": 2,
+      "score": 1
+    },
+    {
+      "turn": 3,
+      "score": 1
+    },
+    {
+      "turn": 4,
+      "score": 1
+    },
+    {
+      "turn": 5,
+      "score": 1
+    },
+    {
+      "turn": 6,
+      "score": 1
+    },
+    {
+      "turn": 7,
+      "score": 1
+    },
+    {
+      "turn": 8,
+      "score": 0
+    },
+    {
+      "turn": 9,
+      "score": 1
+    },
+    {
+      "turn": 10,
+      "score": 1
+    },
+    {
+      "turn": 11,
+      "score": 1
+    },
+    {
+      "turn": 12,
+      "score": 1
+    },
+    {
+      "turn": 13,
+      "score": 0
+    },
+    {
+      "turn": 14,
+      "score": 1
+    },
+    {
+      "turn": 15,
+      "score": 1
+    },
+    {
+      "turn": 16,
+      "score": 0
+    },
+    {
+      "turn": 17,
+      "score": 0
+    },
+    {
+      "turn": 18,
+      "score": 0
+    },
+    {
+      "turn": 19,
+      "score": 0
+    },
+    {
+      "turn": 20,
+      "score": 0
+    }
+  ],
+  "source_answer_score": "13/20",
+  "score_fraction": 0.65,
+  "grading": "Canonical LongDS question-driven prompt; local official DeepSeek same-family judge, not official default leaderboard configuration.",
+  "source_stop": "Local collection reservation quota, not provider402.",
+  "persistent_specification_error_causes": 2,
+  "new_error_checkpoints": [
+    "K13",
+    "K18",
+    "K19"
+  ],
+  "new_normal_checkpoints": [
+    "K10"
+  ],
+  "source_spontaneous_recovery_through20": false,
+  "isolated_precision_error_excluded_from_drift": "K08",
+  "unpropagated_reinterpretation_excluded_from_drift": "K20",
+  "independent_raw_csv_checks": [
+    "initial_population",
+    "funding",
+    "rounding",
+    "poverty_formula",
+    "scope"
+  ],
+  "independent_oracle_executes_actor_pickle_or_code": false,
+  "context_length_causality_established": false,
+  "full37_terminal_outcome": null,
+  "source_input_cache_hit_fraction": 0.9966644378773222,
+  "sampling": "Labels/cohort frozen before reviewer calls; catalog assembled after outcomes. K19 was a prespecified normal candidate, retained as error after source adjudication. Unreached prespecified28/37 not replaced.",
+  "adjudicator": "single nonblind root agent, no independent human/second rater"
+}

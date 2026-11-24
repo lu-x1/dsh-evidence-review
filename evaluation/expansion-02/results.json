@@ -1,0 +1,71 @@
+{
+  "evaluation_id": "DSH-Drift-Pilot-v0.6-20261125",
+  "method": "0.3.0",
+  "release": "0.3.0-experimental.3",
+  "code_changed_by_this_expansion": false,
+  "dataset": {
+    "checkpoints": 25,
+    "error_checkpoints": 10,
+    "normal_checkpoints": 15,
+    "data_sources": 8,
+    "positive_data_sources": 5,
+    "new_error_checkpoints": 3,
+    "new_normal_checkpoints": 1,
+    "new_source_families": 1,
+    "new_underlying_specification_errors": 2
+  },
+  "previous_error_detection": {
+    "n": 3,
+    "N": 6
+  },
+  "new_Kiva_error_detection": {
+    "n": 0,
+    "N": 3
+  },
+  "pooled_measured_error_detection": {
+    "n": 3,
+    "N": 9,
+    "fraction": 0.3333333333333333
+  },
+  "untested_error_checkpoints": [
+    "F26"
+  ],
+  "normal_false_reminder": {
+    "n": 0,
+    "N": 15
+  },
+  "normal_completed_on_track": {
+    "n": 15,
+    "N": 15
+  },
+  "endpoint_review_completion": {
+    "n": 22,
+    "N": 24
+  },
+  "new_Kiva_review_completion": {
+    "n": 2,
+    "N": 4
+  },
+  "new_Kiva_error_reviews_unfinished": {
+    "n": 2,
+    "N": 3
+  },
+  "native_periodic_complete_terminal_pair": {
+    "N": 0,
+    "C": 0,
+    "tasks": 1,
+    "source": "previous_FoodHub"
+  },
+  "Kiva_complete_terminal_pair_available": false,
+  "overall_ten_case_repair_rate": null,
+  "cumulative_budget_exposure_usd": "11.673123154800",
+  "cumulative_budget_cap_usd": "12",
+  "limits": [
+    "Checkpoint ratios are descriptive; related checkpoints are not independent tasks.",
+    "Kiva supplies two causes in one source, not three new independent tasks.",
+    "Old development cases and newly curated frozen-method Kiva cases are reported separately.",
+    "Fixed-candidate detection is not periodic coverage, repair, retention or whole-task success.",
+    "No independent human rater, repeated-seed mean, significance or LongDS official aggregate.",
+    "Kiva source and correction runs are budget-censored; aborted costs and original misses retained."
+  ]
+}
