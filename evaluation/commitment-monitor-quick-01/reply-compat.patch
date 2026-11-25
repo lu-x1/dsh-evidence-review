@@ -1,0 +1,12 @@
+--- a/evaluation/commitment-monitor-01/commitment_monitor.py
++++ b/evaluation/commitment-monitor-01/commitment_monitor.py
+@@ -15,6 +15,9 @@
+ 
+ def split_reply(value):
+     """An omitted/malformed sidecar never cancels an otherwise valid review."""
++    if isinstance(value,dict) and 'review' not in value and 'follow_up' in value:
++        flat=deepcopy(value);follow=flat.pop('follow_up')
++        return flat,follow if isinstance(follow,list) else [],['flat_follow_up_accepted']+([] if isinstance(follow,list) else ['invalid_follow_up'])
+     if isinstance(value,dict) and 'review' in value:
+         follow=value.get('follow_up',[])
+         return value['review'],follow if isinstance(follow,list) else [],([] if isinstance(follow,list) else ['invalid_follow_up'])

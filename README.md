@@ -27,6 +27,8 @@
 
 最新完成[轻量核对状态表6点真实对照](evaluation/commitment-monitor-01/RESULTS.md)：直接复用核对器公开结果维护暂定解释及未解决问题，无单独提取调用；3条已见轨迹、3错3正常。原版与状态表版目标提醒均2/3，正常误提醒均0/3、完成均6/6；状态表费增加16.4%，未启用默认。水质仍沿用错误分母；状态有出处不等于解释正确。该整包探针只有一个错误点拿到前次状态，未独立归因持久化；没有主Agent续跑，**不是纠偏率**。公开通用实现、全部逐点判定及脱敏usage供免费复核，不与上面24点拼接。
 
+随后[剩余18点快速扩查](evaluation/commitment-monitor-quick-01/RESULTS.md)已结束：新增S实际17点、31次请求，最后1正常点预算未发起；合并前轮后23/24点已调用，9个目标错误均已检查，5个形成正确提醒、2个漏检、2个未完成。14个已调用正常点中12个完成、0个交付误提醒；另1条格式问题可零API兼容恢复，原成绩保留。新增6个错误S为3/6，历史原版对应也是3/6，没有新增检出证据；历史参照不是新同期两组对照。新增估算$0.275311104，未启用状态表为默认，未测本轮真实纠偏。完整清单、全部9错表和脱敏usage均公开。
+
 
 [历史v0.6扩测](evaluation/expansion-02/RESULTS.md)与[更早v0.5结果](evaluation/RESULTS.md)原样保留，不跨批次挑最好数字。旧FoodHub真实定期对照最终两组均未通过；Kiva续跑不完整，仍未证明最终任务收益。另行实现的引用兼容候选通过44项本地机制测试；本批保存输出的零API重放恢复1条引用失败，这是兼容性验证，未并入默认代码，也不是新模型纠偏成绩。
 
@@ -71,11 +73,12 @@ python3 evaluation/followup-probes-01/recompute_scores.py
 python3 evaluation/context-diagnostics-01/recompute_scores.py
 python3 evaluation/requirement-state-01/recompute_scores.py
 python3 evaluation/commitment-monitor-01/recompute_scores.py
+python3 evaluation/commitment-monitor-quick-01/recompute_scores.py
 python3 evaluation/expansion-02/recompute_scores.py
 npm test
 ```
 
-前六个命令分别复核主对照、后续探针、上下文诊断、提取试验、状态表探针与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
+前七个命令分别复核主对照、后续探针、上下文诊断、提取试验、状态表探针、快速扩查与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
 
 ## 已知限制与反馈
 
