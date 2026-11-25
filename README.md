@@ -2,7 +2,7 @@
 
 为DeepSeek Harness（DSH）提供定期目标、范围与方法核对。每8次主模型输出检查一次；发现有依据的冲突后，把提醒交给主Agent重算。支持最多3次只读工具求证，复用主请求前缀和宿主模型配置，不需要单独填写API Key，不使用Jev。
 
-这是 **0.3.0-experimental.3 实验版**，默认运行代码仍等同冻结0.3.0。最新完成了独立要求卡的24点两组开发对照，完整9个错误和15个正常点见[新结果表与失败分析](evaluation/requirements-card-01/RESULTS.md)。要求卡候选未并入默认插件。
+这是 **0.3.0-experimental.3 实验版**，默认运行代码仍等同冻结0.3.0。主对照是独立要求卡的24点两组开发试验，完整9个错误和15个正常点见[结果表与失败分析](evaluation/requirements-card-01/RESULTS.md)。要求卡及后续状态表探针均未并入默认插件。
 
 | 最新同批对照 | R0：原核对 | R1：加独立要求卡 |
 |---|---:|---:|
@@ -24,6 +24,8 @@
 另已完成[需求状态提取的6点可行性试验](evaluation/requirement-state-01/RESULTS.md)：要求侧、实现侧各6次，共12次，**可用JSON 0/12**；全部耗尽8192输出额度，10次公开内容为空、2次截断，费用$0.134439。按预定门槛停止后续36次。新日志/计时封装已用于这批真实提取；这不是修复后核对器的检出分数。通用状态内核的25项机制测试通过，但自动提取和语义对齐没有通过可行性验证，均未接入默认插件。
 
 后续[轻量定义提取完整6点对照](evaluation/light-extraction-01/completed-01/RESULTS.md)已补完24份输入：低强度思考12/12可用，关闭思考11/12可用；这是提取交付成绩。内容复核仍有关键定义漏提取，关闭思考还在正常节点错用过期要求，未并入默认插件。24份模型答复估算费共$0.089332200，旧402另保留$0.018885，不计为已发生费用。原部分结果及失败均保留；没有新增检出或纠偏分数。
+
+最新完成[轻量核对状态表6点真实对照](evaluation/commitment-monitor-01/RESULTS.md)：直接复用核对器公开结果维护暂定解释及未解决问题，无单独提取调用；3条已见轨迹、3错3正常。原版与状态表版目标提醒均2/3，正常误提醒均0/3、完成均6/6；状态表费增加16.4%，未启用默认。水质仍沿用错误分母；状态有出处不等于解释正确。该整包探针只有一个错误点拿到前次状态，未独立归因持久化；没有主Agent续跑，**不是纠偏率**。公开通用实现、全部逐点判定及脱敏usage供免费复核，不与上面24点拼接。
 
 
 [历史v0.6扩测](evaluation/expansion-02/RESULTS.md)与[更早v0.5结果](evaluation/RESULTS.md)原样保留，不跨批次挑最好数字。旧FoodHub真实定期对照最终两组均未通过；Kiva续跑不完整，仍未证明最终任务收益。另行实现的引用兼容候选通过44项本地机制测试；本批保存输出的零API重放恢复1条引用失败，这是兼容性验证，未并入默认代码，也不是新模型纠偏成绩。
@@ -68,11 +70,12 @@ python3 evaluation/requirements-card-01/recompute_scores.py
 python3 evaluation/followup-probes-01/recompute_scores.py
 python3 evaluation/context-diagnostics-01/recompute_scores.py
 python3 evaluation/requirement-state-01/recompute_scores.py
+python3 evaluation/commitment-monitor-01/recompute_scores.py
 python3 evaluation/expansion-02/recompute_scores.py
 npm test
 ```
 
-前五个命令分别复核主对照、后续探针、上下文诊断、提取试验与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
+前六个命令分别复核主对照、后续探针、上下文诊断、提取试验、状态表探针与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
 
 ## 已知限制与反馈
 
