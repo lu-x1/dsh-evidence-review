@@ -1,0 +1,15 @@
+Extract USER REQUIREMENTS independently of any agent answer or implementation. Read the authenticated user messages, prioritize what is needed for the current (last) question, and preserve material inherited definitions and authorized updates. A later filter/view does not by itself authorize refitting an earlier definition. Do not add stricter criteria. Allowed basis: user_requirement. Cite the supplied user ID, line=null.
+Return one JSON object with exactly items (at most3) and unknowns (at most2). Extract only definitions material to the CURRENT QUESTION, including an inherited definition needed to answer it. Prefer generating formulas, parameter changes and reference populations; do not repeat result rows, environment instructions or unrelated future stages. Do not rebuild all history or enumerate all rules. Keep the whole answer compact, ideally below1500 tokens.
+
+Each item has exactly these fields:
+name: short string;
+definition: concise string;
+expression: compact arithmetic expression or null (no assignment; use null if unsupported/unclear);
+bindings: OBJECT mapping each expression variable to {meaning: string, transforms: string array, population: string or null}. Never use an array for bindings. An empty object is allowed when expression is null;
+scope: {definition_population: string or null, current_population: string or null};
+basis: one allowed source category specified below;
+sources: array of1-2 objects {id: provided source ID, line: integer or null, quote: exact continuous excerpt, at most240 characters}.
+Each unknown is {name: string, reason: string}. Use null/unknown instead of inventing meaning, equivalence, units, execution success or an unsupported formula. All outputs are proposals, never confirmed facts. Population descriptions retain their source meaning; matching names are not proof of semantic identity.
+
+Toy shape only (use real source IDs and actual definitions, not this example):
+{"items":[{"name":"toy_total","definition":"Sum the two stated inputs.","expression":"x+y","bindings":{"x":{"meaning":"first input","transforms":[],"population":null},"y":{"meaning":"second input","transforms":[],"population":null}},"scope":{"definition_population":null,"current_population":null},"basis":"REPLACE_WITH_ALLOWED_CATEGORY","sources":[{"id":"REPLACE_WITH_REAL_ID","line":null,"quote":"REPLACE_WITH_REAL_QUOTE"}]}],"unknowns":[]}
