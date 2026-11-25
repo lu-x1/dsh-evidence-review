@@ -21,6 +21,8 @@
 
 最新[逐项比较、压缩视图及计时诊断](evaluation/context-diagnostics-01/RESULTS.md)也未通过筛选：逐项指令1/3目标提醒；压缩high为0/5、low为1/5（含一个预算截断点），low有1/3正常误提醒。压缩后Kiva和水质的迟到结论开始识别目标，但实验日志落盘等开销也被计入120秒，不能直接视为原生延迟。已在零API本地测试中验证独立日志/计时修复，旧分数保留，尚无修复后的实网或全任务成绩。
 
+另已完成[需求状态提取的6点可行性试验](evaluation/requirement-state-01/RESULTS.md)：要求侧、实现侧各6次，共12次，**可用JSON 0/12**；全部耗尽8192输出额度，10次公开内容为空、2次截断，费用$0.134439。按预定门槛停止后续36次。新日志/计时封装已用于这批真实提取；这不是修复后核对器的检出分数。通用状态内核的25项机制测试通过，但自动提取和语义对齐没有通过可行性验证，均未接入默认插件。
+
 [历史v0.6扩测](evaluation/expansion-02/RESULTS.md)与[更早v0.5结果](evaluation/RESULTS.md)原样保留，不跨批次挑最好数字。旧FoodHub真实定期对照最终两组均未通过；Kiva续跑不完整，仍未证明最终任务收益。另行实现的引用兼容候选通过44项本地机制测试；本批保存输出的零API重放恢复1条引用失败，这是兼容性验证，未并入默认代码，也不是新模型纠偏成绩。
 
 ## 安装与启用
@@ -62,11 +64,12 @@ dsh plugin --profile YOUR_PROFILE add /absolute/path/to/package
 python3 evaluation/requirements-card-01/recompute_scores.py
 python3 evaluation/followup-probes-01/recompute_scores.py
 python3 evaluation/context-diagnostics-01/recompute_scores.py
+python3 evaluation/requirement-state-01/recompute_scores.py
 python3 evaluation/expansion-02/recompute_scores.py
 npm test
 ```
 
-前四个命令分别复核主对照、后续探针、上下文诊断与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
+前五个命令分别复核主对照、后续探针、上下文诊断、提取试验与历史公开逐例分数、费用或源码哈希，无模型费用。最后一个运行包含真实DSH组件、只读工具隔离的机制测试，需要已安装开发依赖及Linux允许bubblewrap用户命名空间；测试用假模型，无付费调用。此前标准profile链接布局的实际启停测试通过；尚未验证干净环境的一键在线安装。
 
 ## 已知限制与反馈
 
